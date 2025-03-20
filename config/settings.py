@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e51yeee_s3icq@07o#h_93a2$+v41fv0(%v$si)$t_!c5#ho_t'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
 
+AUTH_USER_MODEL = 'reservations.CustomUser'
 
 # Application definition
 
@@ -37,7 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'reservations',
 ]
+
+
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,8 +84,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DATABASE_NAME'),  # Nombre de la base de datos
+        'USER': config('DATABASE_USER'),  # Usuario de PostgreSQL
+        # La que creaste en PostgreSQL
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        # Cambia esto si PostgreSQL está en otro servidor
+        'HOST': config('DATABASE_HOST'),
+        'PORT': config('DATABASE_PORT'),  # Puerto por defecto
     }
 }
 
