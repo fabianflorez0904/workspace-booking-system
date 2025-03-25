@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+  <h2>Bienvenido, {{ user.username }} 👋</h2>
+  <p>Rol: {{ user.get_role_display }}</p>
+
+  {% if user.role == "admin" %}
+  <h3>Panel de Administrador</h3>
+  <a href="{% url 'lista_usuarios' %}" class="btn btn-primary"
+    >👤 Gestionar Usuarios</a
+  >
+  {% comment %}
+  <a href="{% url 'lista_espacios' %}" class="btn btn-primary"
+    >🏢 Espacios de Trabajo</a
+  >
+  {% endcomment %} {% else %}
+  <h3>Reservas Actuales</h3>
+  <p>Aquí podrás ver tus reservas activas y pasadas.</p>
+
+  {% comment %}
+  <a href="{% url 'mis_reservas' %}" class="btn btn-success">📅 Mis Reservas</a>
+  {% endcomment %} {% endif %}
+
+  <br /><br />
+</div>
+{% endblock %} {% block title %}Dashboard{% endblock title %}
