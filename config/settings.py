@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -85,17 +86,21 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DATABASE_NAME'),  # Nombre de la base de datos
-        'USER': config('DATABASE_USER'),  # Usuario de PostgreSQL
-        # La que creaste en PostgreSQL
-        'PASSWORD': config('DATABASE_PASSWORD'),
-        # Cambia esto si PostgreSQL está en otro servidor
-        'HOST': config('DATABASE_HOST'),
-        'PORT': config('DATABASE_PORT'),  # Puerto por defecto
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('DATABASE_NAME'),  # Nombre de la base de datos
+#         'USER': config('DATABASE_USER'),  # Usuario de PostgreSQL
+#         # La que creaste en PostgreSQL
+#         'PASSWORD': config('DATABASE_PASSWORD'),
+#         # Cambia esto si PostgreSQL está en otro servidor
+#         'HOST': config('DATABASE_HOST'),
+#         'PORT': config('DATABASE_PORT'),  # Puerto por defecto
+#     }
+# }
 
 
 # Password validation
