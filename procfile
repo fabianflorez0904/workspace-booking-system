@@ -1,2 +1,2 @@
-web: gunicorn workspace_booking_system.wsgi --log-file -
+web: gunicorn workspace_pip freeze > requirements.txtbooking_system.wsgi --log-file -
 

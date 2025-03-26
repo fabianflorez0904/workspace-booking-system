@@ -85,6 +85,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
@@ -101,6 +102,10 @@ DATABASES = {
 #         'PORT': config('DATABASE_PORT'),  # Puerto por defecto
 #     }
 # }
+# DATABASES['default'] = dj_database_url.config(
+#     default=os.getenv('DATABASE_URL'))
+# print(DATABASES['default'])
+# print('Hola'*500)
 
 
 # Password validation
