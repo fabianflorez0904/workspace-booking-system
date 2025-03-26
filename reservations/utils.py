@@ -1,4 +1,4 @@
-from .models import UserActivityLog
+from reservations.models.useractivitylog_models import UserActivityLog
 
 
 def log_activity(user, action):

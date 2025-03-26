@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib import messages
 from django.urls import reverse
-from reservations.forms import EditarUsuarioForm, CambiarPasswordForm
-from reservations.models import CustomUser
+from reservations.forms.customuser_forms import EditarUsuarioForm, CambiarPasswordForm
+from reservations.models.customuser_models import CustomUser
 from reservations.utils import log_activity
 
 # Create your views here.

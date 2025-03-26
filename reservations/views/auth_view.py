@@ -1,5 +1,5 @@
 
-from reservations.forms import RegistroUsuarioForm
+from reservations.forms.customuser_forms import RegistroUsuarioForm
 from reservations.utils import log_activity
 from django.shortcuts import redirect, render
 from django.contrib.auth import login

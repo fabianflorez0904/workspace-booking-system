@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import CustomUser, Reservation, Workspace, Notificacion, UserActivityLog
+from reservations.models.customuser_models import CustomUser
+from reservations.models.reservation_models import Reservation
+from reservations.models.workspace_models import Workspace
+from reservations.models.notification_models import Notificacion
+from reservations.models.useractivitylog_models import UserActivityLog
 # Register your models here.
 
 admin.site.register(CustomUser)

@@ -4,9 +4,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 import json
 
-from reservations.forms import RegistroUsuarioByAdmin, EditarUsuarioFormByAdmin
+from reservations.forms.customuser_forms import RegistroUsuarioByAdmin, EditarUsuarioFormByAdmin
 from reservations.utils import log_activity
-from reservations.models import CustomUser
+from reservations.models.customuser_models import CustomUser
 
 
 def admin_required(view_func):
