@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import registrar_usuario, dashboard, perfil_usuario, editar_usuario, lista_usuarios, toggle_usuario, registrar_usuario_admin_mode, editar_usuario_admin_mode, cambiar_password
+from reservations.views.user_view import dashboard, perfil_usuario, editar_usuario, cambiar_password
+from reservations.views.administrador_view import registrar_usuario_admin_mode, editar_usuario_admin_mode, lista_usuarios, toggle_usuario
+from reservations.views.auth_view import registrar_usuario
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [

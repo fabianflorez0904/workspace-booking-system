@@ -1,16 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth import login, update_session_auth_hash
-from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from django.urls import reverse
-from .forms import RegistroUsuarioForm, RegistroUsuarioByAdmin, EditarUsuarioFormByAdmin, EditarUsuarioForm, CambiarPasswordForm
-from .models import CustomUser
-from .utils import log_activity
 import json
 
-# Create your views here.
+from reservations.forms import RegistroUsuarioByAdmin, EditarUsuarioFormByAdmin
+from reservations.utils import log_activity
+from reservations.models import CustomUser
 
 
 def admin_required(view_func):
@@ -51,26 +47,6 @@ def editar_usuario_admin_mode(request, user_id):
         form = EditarUsuarioFormByAdmin(instance=user)
 
     return render(request, 'usuarios/edicionbyadmin.html', {'form': form, 'usuario': user})
-
-
-def registrar_usuario(request):
-    if request.method == "POST":
-        form = RegistroUsuarioForm(request.POST)
-        if form.is_valid():
-            user = form.save()  # 🔥 Aquí ya usará CustomUser
-            login(request, user)
-            log_activity(
-                request.user, f"{user.username} registro su usuario correctamente")
-            return redirect('dashboard')
-    else:
-        form = RegistroUsuarioForm()
-
-    return render(request, 'usuarios/registrar.html', {'form': form})
-
-
-@login_required
-def dashboard(request):
-    return render(request, 'reservation/dashboard.html')
 
 
 @login_required
@@ -115,52 +91,3 @@ def toggle_usuario(request, user_id):
         return JsonResponse({"success": True, "is_active": usuario.is_active})
 
     return JsonResponse({"success": False}, status=400)
-
-
-@login_required
-def editar_usuario(request, user_id):
-
-    if request.user.id == user_id:
-        user = get_object_or_404(CustomUser, id=user_id)
-
-        if request.method == 'POST':
-            form = EditarUsuarioForm(request.POST, instance=user)
-            if form.is_valid():
-                user = form.save()
-                user.save()
-                log_activity(request.user, f"Edito el usuario {user.username}")
-                return redirect('perfil_usuario', user_id)
-        else:
-            form = EditarUsuarioForm(instance=user)
-    else:
-        return redirect('dashboard')
-
-
-@login_required
-def perfil_usuario(request, user_id):
-    if request.user.id == user_id:
-        user = get_object_or_404(CustomUser, id=user_id)
-    else:
-        return redirect('dashboard')
-
-    return render(request, 'usuarios/perfil.html', {'usuario': user})
-
-    return render(request, 'usuarios/editar_perfil.html', {'form': form, 'usuario': user})
-
-
-@login_required
-def cambiar_password(request):
-    if request.method == "POST":
-        form = CambiarPasswordForm(user=request.user, data=request.POST)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
-            messages.success(
-                request, "Tu contraseña ha sido actualizada correctamente.")
-            # print("Hlaaaaa La contrasena cambio")
-            log_activity(request.user, f"Cambio la password")
-            return redirect(reverse('perfil_usuario', kwargs={"user_id": request.user.id}))
-    else:
-        form = CambiarPasswordForm(user=request.user)
-
-    return render(request, "usuarios/cambiar_password.html", {'form': form})
