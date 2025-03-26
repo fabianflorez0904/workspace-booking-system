@@ -140,6 +140,16 @@
                     <i class="bi bi-gear me-2"></i>Configuración
                   </a>
                 </li>
+
+                {% if user.role == "admin" %}
+                <li>
+                  <a class="dropdown-item" href="{% url 'admin_dashboard' %}">
+                    <i class="bi bi-person-vcard"></i>
+                    Panel de Administracion
+                  </a>
+                </li>
+                {% endif %}
+
                 <li><hr class="dropdown-divider" /></li>
                 <li>
                   <form method="post" action="{% url 'logout' %}">

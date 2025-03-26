@@ -4,18 +4,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 import json
 
-from reservations.forms import RegistroUsuarioByAdmin, EditarUsuarioFormByAdmin
-from reservations.utils import log_activity
-from reservations.models import CustomUser
+
+from reservations.forms.customuser_forms import RegistroUsuarioByAdmin, EditarUsuarioFormByAdmin
+from reservations.utils import log_activity, require_role
+from reservations.models.customuser_models import CustomUser
 
 
-def admin_required(view_func):
-    """ Decorador de restriccion de acceso a superusuarios y administradores """
-    return login_required(user_passes_test(lambda u: u.is_superuser or u.role == 'admin')(view_func))
+@require_role
+def admin_dashboard(request):
+    return render(request, 'reservation/admin_dashboard.html')
 
 
-@login_required
-@admin_required
+@require_role
 def registrar_usuario_admin_mode(request):
     """Registra usuarios desde el panel de administrador"""
     if request.method == "POST":
@@ -31,8 +31,7 @@ def registrar_usuario_admin_mode(request):
     return render(request, 'usuarios/registrobyadmin.html', {'form': form})
 
 
-@login_required
-@admin_required
+@require_role
 def editar_usuario_admin_mode(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
 
@@ -49,8 +48,7 @@ def editar_usuario_admin_mode(request, user_id):
     return render(request, 'usuarios/edicionbyadmin.html', {'form': form, 'usuario': user})
 
 
-@login_required
-@admin_required
+@require_role
 def lista_usuarios(request):
     query = request.GET.get('q', '')
     filtro_rol = request.GET.get('rol', '')
@@ -72,8 +70,7 @@ def lista_usuarios(request):
     return render(request, 'usuarios/lista.html', {'usuarios': usuarios})
 
 
-@login_required
-@admin_required
+@require_role
 @csrf_exempt
 def toggle_usuario(request, user_id):
     if request.method == "POST":

@@ -1,0 +1,19 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+  <h2>Bienvenido, {{ user.username }} 👋</h2>
+  <p>Rol: {{ user.get_role_display }}</p>
+
+  <h3>Panel de Administrador ADMIN</h3>
+  <a href="{% url 'lista_usuarios' %}" class="btn btn-primary"
+    >👤 Gestionar Usuarios</a
+  >
+  <a href="{% url 'lista_espacios' %}" class="btn btn-primary"
+    >🏢 Espacios de Trabajo</a
+  >
+  <a href="http://127.0.0.1:8000/admin/" class="btn btn-primary"
+    >👽 Django Admin Panel</a
+  >
+
+  <br /><br />
+</div>
+{% endblock %} {% block title %}Admin Dashboard{% endblock title %}
