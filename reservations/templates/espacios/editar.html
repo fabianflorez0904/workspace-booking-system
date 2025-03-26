@@ -1,0 +1,170 @@
+{% extends "base.html" %} {% block title %}Registrar Espacio{% endblock title %}
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+            <h3 class="h4 fw-bold mb-3">Crear Nuevo Espacio</h3>
+            <p class="text-muted">
+              Registra un nuevo espacio de trabajo en el sistema
+            </p>
+          </div>
+
+          {% if form.errors %}
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <i class="bi bi-exclamation-triangle me-2"></i>Por favor corrige los
+            errores en el formulario
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+            ></button>
+          </div>
+          {% endif %}
+
+          <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <div class="row g-3">
+              <!-- Nombre -->
+              <div class="col-12">
+                <label for="id_name" class="form-label"
+                  >Nombre del Espacio</label
+                >
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-building"></i
+                  ></span>
+                  <input
+                    type="text"
+                    class="form-control {% if form.name.errors %}is-invalid{% endif %}"
+                    id="id_name"
+                    name="name"
+                    value="{{ form.name.value }}"
+                    required
+                    placeholder="Ej: Sala de Juntas A"
+                  />
+                  {% for error in form.name.errors %}
+                  <div class="invalid-feedback">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Tipo -->
+              <div class="col-12">
+                <label for="id_type" class="form-label">Tipo de Espacio</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-grid-1x2"></i
+                  ></span>
+                  <select
+                    class="form-select {% if form.type.errors %}is-invalid{% endif %}"
+                    id="id_type"
+                    name="type"
+                    required
+                  >
+                    <option value="">Seleccionar tipo...</option>
+                    <option value="OFICINA"  {% if form.type.value == 'OFICINA' %}selected{% endif %}>Oficina</option>
+                    <option value="SALA_REUNIONES" {% if form.type.value == 'SALA_REUNIONES' %}selected{% endif %}>Sala de Reuniones</option>
+                    <option value="COWORKING" {% if form.type.value == 'COWORKING' %}selected{% endif %}>Coworking</option>
+                  </select>
+                  {% for error in form.type.errors %}
+                  <div class="invalid-feedback">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Capacidad y Ubicación -->
+              <div class="col-md-6">
+                <label for="id_capacity" class="form-label">Capacidad</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-people"></i
+                  ></span>
+                  <input
+                    type="number"
+                    class="form-control {% if form.capacity.errors %}is-invalid{% endif %}"
+                    id="id_capacity"
+                    name="capacity"
+                    min="1"
+                    value="{{ form.capacity.value }}"
+                    required
+                  />
+                  {% for error in form.capacity.errors %}
+                  <div class="invalid-feedback">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="id_location" class="form-label">Ubicación</label>
+                <div class="input-group">
+                  <span class="input-group-text"
+                    ><i class="bi bi-geo-alt"></i
+                  ></span>
+                  <input
+                    type="text"
+                    class="form-control {% if form.location.errors %}is-invalid{% endif %}"
+                    id="id_location"
+                    name="location"
+                    value="{{ form.location.value }}"
+                    required
+                    placeholder="Ej: Piso 3, Sector B"
+                  />
+                  {% for error in form.location.errors %}
+                  <div class="invalid-feedback">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Disponibilidad -->
+              <div class="col-12">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="id_availability"
+                    name="availability"
+                    
+                    {% if form.availability.value %}checked{% endif %}
+                                     />
+                  <label class="form-check-label" for="id_availability"
+                    >Disponible para reservas</label
+                  >
+                </div>
+              </div>
+
+              <!-- Botones -->
+              <div class="col-12 mt-4">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <a
+                      href="{% url 'lista_espacios' %}"
+                      class="btn btn-outline-secondary w-100 py-2"
+                    >
+                      <i class="bi bi-arrow-left me-2"></i>Volver
+                    </a>
+                  </div>
+                  <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                      <i class="bi bi-building-add me-2"></i>Crear Espacio
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

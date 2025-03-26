@@ -1,6 +1,7 @@
 from django.urls import path
 from reservations.views.user_view import dashboard, perfil_usuario, editar_usuario, cambiar_password
-from reservations.views.administrador_view import registrar_usuario_admin_mode, editar_usuario_admin_mode, lista_usuarios, toggle_usuario
+from reservations.views.administrador_view import registrar_usuario_admin_mode, editar_usuario_admin_mode, lista_usuarios, toggle_usuario, admin_dashboard
+from reservations.views.workspace_view import lista_espacios, registrar_espacio, editar_espacio
 from reservations.views.auth_view import registrar_usuario
 from django.contrib.auth import views as auth_views
 
@@ -12,6 +13,13 @@ urlpatterns = [
     path('usuario/perfil/cambiarpassword/',
          cambiar_password, name='cambiar_password'),
 
+
+    path('administrador/dashboard/', admin_dashboard, name='admin_dashboard'),
+    path('administrador/espacios/', lista_espacios, name='lista_espacios'),
+    path('administrador/espacios/registrar',
+         registrar_espacio, name='registrar_espacio'),
+    path('administrador/espacios/editar/<int:espacio_id>',
+         editar_espacio, name='editar_espacio'),
 
     path('administrador/usuarios/',
          lista_usuarios, name='lista_usuarios'),
