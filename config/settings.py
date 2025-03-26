@@ -19,6 +19,7 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DATABASE_URL = config("DATABASE_URL")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -30,7 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
+    'ALLOWED_HOSTS', default='*').split(',')
 
 # AUTH_USER_MODEL = 'reservations.models.customuser_models.CustomUser'
 AUTH_USER_MODEL = 'reservations.CustomUser'
@@ -86,26 +87,23 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-}
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('DATABASE_NAME'),  # Nombre de la base de datos
-#         'USER': config('DATABASE_USER'),  # Usuario de PostgreSQL
-#         # La que creaste en PostgreSQL
-#         'PASSWORD': config('DATABASE_PASSWORD'),
-#         # Cambia esto si PostgreSQL está en otro servidor
-#         'HOST': config('DATABASE_HOST'),
-#         'PORT': config('DATABASE_PORT'),  # Puerto por defecto
-#     }
-# }
-# DATABASES['default'] = dj_database_url.config(
-#     default=os.getenv('DATABASE_URL'))
-# print(DATABASES['default'])
-# print('Hola'*500)
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DATABASE_NAME'),  # Nombre de la base de datos
+            'USER': config('DATABASE_USER'),  # Usuario de PostgreSQL
+            # La que creaste en PostgreSQL
+            'PASSWORD': config('DATABASE_PASSWORD'),
+            # Cambia esto si PostgreSQL está en otro servidor
+            'HOST': config('DATABASE_HOST'),
+            'PORT': config('DATABASE_PORT'),  # Puerto por defecto
+        }
+    }
 
 
 # Password validation
