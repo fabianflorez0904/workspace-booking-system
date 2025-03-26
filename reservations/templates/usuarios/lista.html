@@ -104,7 +104,7 @@
             </td>
             <td class="text-center">
               {% if usuario.id == user.id %}
-              <a href="#"  class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Editar perfil">
+              <a href="{% url 'perfil_usuario' user.id %}"  class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" title="Editar perfil">
                 <i class="bi bi-pencil-square"></i>
               </a>
               {% else%}

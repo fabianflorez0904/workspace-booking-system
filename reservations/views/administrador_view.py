@@ -60,7 +60,7 @@ def lista_usuarios(request):
 
     if query:
         usuarios = usuarios.filter(
-            username__icontains=query) | usuarios.filter(email__icontains=query)
+            username__icontains=query) | usuarios.filter(email__icontains=query) | usuarios.filter(first_name__icontains=query) | usuarios.filter(last_name__icontains=query)
 
     if filtro_rol:
         usuarios = usuarios.filter(role=filtro_rol)
