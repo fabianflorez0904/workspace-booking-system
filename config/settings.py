@@ -30,7 +30,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['workspace-booking-system-production.up.railway.app']
+# ALLOWED_HOSTS = ['workspace-booking-system-production.up.railway.app']
+ALLOWED_HOSTS = ['*']
 
 # AUTH_USER_MODEL = 'reservations.models.customuser_models.CustomUser'
 AUTH_USER_MODEL = 'reservations.CustomUser'
