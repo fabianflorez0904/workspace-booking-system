@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Convertir la fecha seleccionada en objeto Date
 
         const selectedDate = new Date(date + 'T00:00:00');
-        alert(selectedDate < today)
         if (selectedDate < today || selectedDate > maxDate) {
             errors.push('La fecha debe estar dentro de los próximos 14 días.');
         }

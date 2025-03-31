@@ -1,8 +1,5 @@
-{% extends "base.html" %} 
-{% load static %} 
-{% block title %}Espacios Disponibles{% endblock title %} 
-
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block title %}Espacios
+Disponibles{% endblock title %} {% block content %}
 <div class="container-fluid py-5">
   <div class="row g-4">
     <!-- Formulario lateral -->
@@ -14,9 +11,9 @@
           <form
             id="reservation-form"
             class="needs-validation"
-            novalidate
             action="{% url 'check_availability' %}"
             method="GET"
+            novalidate
           >
             <div class="mb-3">
               <label for="people" class="form-label">Personas</label>
@@ -25,9 +22,10 @@
                 class="form-control"
                 id="people"
                 name="people"
-                value="{{ request.GET.people }}"
                 min="1"
+                value="{{ request.GET.people }}"
                 required
+                placeholder="Ej: 4"
               />
             </div>
 
@@ -69,7 +67,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100">
-              <i class="bi bi-arrow-repeat me-2"></i>Buscar Nuevamente
+              <i class="bi bi-search me-2"></i>Buscar Disponibilidad
             </button>
           </form>
 
@@ -134,7 +132,7 @@
                     >
                   </div>
                   <div class="mb-2">
-                    <i class="bi bi-people me-2"></i>Capacidad: {{ workspace.capacity }}
+                    <i class="bi bi-people me-2"></i>Capacidad: {{workspace.capacity }}
                   </div>
                   <div class="text-muted small">
                     <i class="bi bi-geo-alt me-2"></i>{{ workspace.location }}
@@ -142,17 +140,17 @@
                 </div>
                 <div class="card-footer bg-transparent">
                   <!-- Modificar el botón de Reservar en cada espacio disponible -->
-                  <button class="btn btn-outline-primary w-100" 
-                  data-bs-toggle="modal" 
-                  data-bs-target="#confirmReservationModal"
-                  data-name="{{ workspace.name }}"
-                  data-location="{{ workspace.location }}"
-                  data-capacity="{{ workspace.capacity }}"
-                  data-id="{{ workspace.id }}">
-                  Reservar
+                  <button
+                    class="btn btn-outline-primary w-100"
+                    data-bs-toggle="modal"
+                    data-bs-target="#confirmReservationModal"
+                    data-name="{{ workspace.name }}"
+                    data-location="{{ workspace.location }}"
+                    data-capacity="{{ workspace.capacity }}"
+                    data-id="{{ workspace.id }}"
+                  >
+                    Reservar
                   </button>
-
-
                 </div>
               </div>
             </div>
@@ -170,17 +168,27 @@
   </div>
 </div>
 
-
-
 <!-- Modal de Confirmación de Reserva -->
-<div class="modal fade" id="confirmReservationModal" tabindex="-1" aria-labelledby="confirmReservationLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="confirmReservationModal"
+  tabindex="-1"
+  aria-labelledby="confirmReservationLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header bg-light">
         <h3 class="modal-title h5 fw-bold" id="confirmReservationLabel">
-          <i class="bi bi-check-circle-fill text-success me-2"></i>Confirmar Reserva
+          <i class="bi bi-check-circle-fill text-success me-2"></i>Confirmar
+          Reserva
         </h3>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
       </div>
       <div class="modal-body">
         <div class="row g-4">
@@ -227,7 +235,8 @@
             <div class="card border-0 shadow-sm h-100">
               <div class="card-body">
                 <h5 class="h6 fw-bold mb-3 text-primary">
-                  <i class="bi bi-calendar-check me-2"></i>Detalles de la Reserva
+                  <i class="bi bi-calendar-check me-2"></i>Detalles de la
+                  Reserva
                 </h5>
                 <div class="d-flex align-items-center mb-3">
                   <div class="me-3">
@@ -270,20 +279,32 @@
           </div>
         </div>
 
-        <form id="reservation-form-confirmation" action="{% url 'confirm_reservation' %}" method="POST">
+        <form
+          id="reservation-form-confirmation"
+          action="{% url 'confirm_reservation' %}"
+          method="POST"
+        >
           {% csrf_token %}
-          <input type="hidden" name="workspace_id" id="modal-workspace-id">
-          <input type="hidden" name="date" value="{{ date }}">
-          <input type="hidden" name="start_time" value="{{ start_time }}">
-          <input type="hidden" name="end_time" value="{{ end_time }}">
-          <input type="hidden" name="people" value="{{ people }}">
+          <input type="hidden" name="workspace_id" id="modal-workspace-id" />
+          <input type="hidden" name="date" value="{{ date }}" />
+          <input type="hidden" name="start_time" value="{{ start_time }}" />
+          <input type="hidden" name="end_time" value="{{ end_time }}" />
+          <input type="hidden" name="people" value="{{ people }}" />
         </form>
       </div>
       <div class="modal-footer bg-light">
-        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-dismiss="modal">
+        <button
+          type="button"
+          class="btn btn-lg btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
           <i class="bi bi-x-circle me-2"></i>Cancelar
         </button>
-        <button type="submit" class="btn btn-lg btn-success" form="reservation-form-confirmation">
+        <button
+          type="submit"
+          class="btn btn-lg btn-success"
+          form="reservation-form-confirmation"
+        >
           <i class="bi bi-check-circle me-2"></i>Confirmar Reserva
         </button>
       </div>
@@ -291,23 +312,24 @@
   </div>
 </div>
 
-
-
-{% endblock content %}
-
-{% block extra_js %}
+{% endblock content %} {% block extra_js %}
 <script src="{% static 'js/reservation_validation.js' %}"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-      var confirmModal = document.getElementById('confirmReservationModal');
-      confirmModal.addEventListener('show.bs.modal', function (event) {
-          var button = event.relatedTarget;
-          document.getElementById('modal-workspace-name').textContent = button.getAttribute('data-name');
-          document.getElementById('modal-workspace-location').textContent = button.getAttribute('data-location');
-          document.getElementById('modal-workspace-capacity').textContent = button.getAttribute('data-capacity');
-          document.getElementById('modal-workspace-id').value = button.getAttribute('data-id');
-      });
+    var confirmModal = document.getElementById("confirmReservationModal");
+    confirmModal.addEventListener("show.bs.modal", function (event) {
+      var button = event.relatedTarget;
+      document.getElementById("modal-workspace-name").textContent =
+        button.getAttribute("data-name");
+      document.getElementById("modal-workspace-location").textContent =
+        button.getAttribute("data-location");
+      document.getElementById("modal-workspace-capacity").textContent =
+        button.getAttribute("data-capacity");
+      document.getElementById("modal-workspace-id").value =
+        button.getAttribute("data-id");
+    });
   });
-  </script>
+</script>
+<script src="{% static 'js/reservation_validation.js' %}"></script>
 
 {% endblock extra_js %}
