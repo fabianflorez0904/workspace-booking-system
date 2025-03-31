@@ -12,11 +12,6 @@ from reservations.utils import log_activity
 
 
 @login_required
-def dashboard(request):
-    return render(request, 'reservation/dashboard.html')
-
-
-@login_required
 def editar_usuario(request, user_id):
 
     if request.user.id == user_id:

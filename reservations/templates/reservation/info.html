@@ -1,0 +1,114 @@
+{% extends 'base.html' %} 
+{% load static %} 
+{% block title %}Reserva #{{ reservation.id }} - {{ reservation.workspace.name }}{% endblock title %} 
+
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow">
+        <div class="card-body p-4">
+          <!-- Header -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h1 class="h3 mb-1">Reserva #{{ reservation.id }} - {{ reservation.workspace.name }}</h1>
+              <span class="badge bg-secondary">Espacio: {{ reservation.workspace.get_type_display }}</span>
+            </div>
+            <span class="badge {% if reservation.status == 'CONFIRMADA' %}bg-success{% elif reservation.status == 'CANCELADA' %}bg-danger{% else %}bg-warning{% endif %} fs-6">
+              {{ reservation.get_status_display }}
+            </span>
+          </div>
+
+          <!-- Timeline -->
+          <div class="mb-5">
+            <h5 class="mb-3"><i class="bi bi-clock-history me-2"></i>Progreso de Reserva</h5>
+            <div class="list-group">
+              <div class="list-group-item border-0">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-primary me-3"><i class="bi bi-calendar-plus"></i></span>
+                  <div>
+                    <span class="small">Creada para el dia {{ reservation.start_time | date:"d M Y H:i"  }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="list-group-item border-0">
+                <div class="d-flex align-items-center">
+                  <span class="badge {% if reservation.status != 'PENDIENTE' %}bg-primary{% else %}bg-secondary{% endif %} me-3">
+                    <i class="bi {% if reservation.status == 'CONFIRMADA' %}bi-check-circle{% else %}bi-hourglass-split{% endif %}"></i>
+                  </span>
+                  <div>
+                    <span class="small">Estado actual: {{ reservation.get_status_display }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalles de la Reserva -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                  <h5 class="h6 mb-3"><i class="bi bi-info-circle me-2"></i>Detalles</h5>
+                  <dl class="row mb-0">
+                    <dt class="col-6">Fecha:</dt>
+                    <dd class="col-6">{{ reservation.start_time|date:"d M Y" }}</dd>
+
+                    <dt class="col-6">Horario:</dt>
+                    <dd class="col-6">{{ reservation.start_time|time }} - {{ reservation.end_time|time }}</dd>
+
+                    <dt class="col-6">Duración:</dt>
+                    <dd class="col-6">{{ duration }} horas</dd>
+
+                    <dt class="col-6">Personas:</dt>
+                    <dd class="col-6">{{ reservation.people }}</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                  <h5 class="h6 mb-3"><i class="bi bi-building me-2"></i>{{ reservation.workspace.name }}</h5>
+                  <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-geo-alt me-2"></i>
+                    <span>{{ reservation.workspace.location }}</span>
+                  </div>
+                  <div class="d-flex align-items-center mb-2">
+                    <i class="bi bi-people me-2"></i>
+                    <span>Capacidad: {{ reservation.workspace.capacity }} personas</span>
+                  </div>
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <span>Tipo: {{ reservation.workspace.get_type_display }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="d-flex justify-content-between align-items-center border-top pt-4">
+            <a href="{% url 'lista_reservas' %}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-2"></i>Volver a mis reservas
+            </a>
+            <div class="d-flex gap-2">
+              {% if reservation.status == 'PENDIENTE' %}
+              <a href="#" class="btn btn-success">
+                <i class="bi bi-check-circle me-2"></i>Confirmar
+              </a>
+              {% endif %}
+              <a href="#" class="btn btn-outline-danger">
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

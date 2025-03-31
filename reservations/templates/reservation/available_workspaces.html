@@ -1,0 +1,313 @@
+{% extends "base.html" %} 
+{% load static %} 
+{% block title %}Espacios Disponibles{% endblock title %} 
+
+{% block content %}
+<div class="container-fluid py-5">
+  <div class="row g-4">
+    <!-- Formulario lateral -->
+    <div class="col-md-4 col-lg-3">
+      <div class="card border-0 shadow h-100">
+        <div class="card-body p-4">
+          <h4 class="h5 fw-bold mb-3">Nueva Búsqueda</h4>
+
+          <form
+            id="reservation-form"
+            class="needs-validation"
+            novalidate
+            action="{% url 'check_availability' %}"
+            method="GET"
+          >
+            <div class="mb-3">
+              <label for="people" class="form-label">Personas</label>
+              <input
+                type="number"
+                class="form-control"
+                id="people"
+                name="people"
+                value="{{ request.GET.people }}"
+                min="1"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="date" class="form-label">Fecha</label>
+              <input
+                type="date"
+                class="form-control"
+                id="date"
+                name="date"
+                value="{{ request.GET.date }}"
+                required
+              />
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label for="start_time" class="form-label">Inicio</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="start_time"
+                  name="start_time"
+                  value="{{ request.GET.start_time }}"
+                  required
+                />
+              </div>
+              <div class="col-6">
+                <label for="end_time" class="form-label">Fin</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="end_time"
+                  name="end_time"
+                  value="{{ request.GET.end_time }}"
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-arrow-repeat me-2"></i>Buscar Nuevamente
+            </button>
+          </form>
+
+          <div
+            id="error-message"
+            class="alert alert-danger mt-3 d-none"
+            role="alert"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="col-md-8 col-lg-9">
+      <div class="card border-0 shadow">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h4 fw-bold mb-0">Espacios Disponibles</h2>
+            <div class="text-muted small">
+              {{ available_workspaces|length }} resultados
+            </div>
+          </div>
+
+          <!-- Detalles de la búsqueda -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <div class="fw-bold small text-muted">Fecha</div>
+                  <div>{{ date }}</div>
+                </div>
+                <div class="col-md-3">
+                  <div class="fw-bold small text-muted">Horario</div>
+                  <div>{{ start_time }} - {{ end_time }}</div>
+                </div>
+
+                <div class="col-md-3">
+                  <div class="fw-bold small text-muted">Tiempo</div>
+                  <div>{{ tiempo }}</div>
+                </div>
+                <div class="col-md-3">
+                  <div class="fw-bold small text-muted">Personas</div>
+                  <div>{{ people }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Listado de espacios -->
+          {% if available_workspaces %}
+          <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for workspace in available_workspaces %}
+            <div class="col">
+              <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                  <div
+                    class="d-flex justify-content-between align-items-start mb-2"
+                  >
+                    <h5 class="card-title mb-0">{{ workspace.name }}</h5>
+                    <span class="badge bg-primary"
+                      >{{ workspace.get_type_display }}</span
+                    >
+                  </div>
+                  <div class="mb-2">
+                    <i class="bi bi-people me-2"></i>Capacidad: {{ workspace.capacity }}
+                  </div>
+                  <div class="text-muted small">
+                    <i class="bi bi-geo-alt me-2"></i>{{ workspace.location }}
+                  </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                  <!-- Modificar el botón de Reservar en cada espacio disponible -->
+                  <button class="btn btn-outline-primary w-100" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#confirmReservationModal"
+                  data-name="{{ workspace.name }}"
+                  data-location="{{ workspace.location }}"
+                  data-capacity="{{ workspace.capacity }}"
+                  data-id="{{ workspace.id }}">
+                  Reservar
+                  </button>
+
+
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="alert alert-warning mb-0" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>No se encontraron
+            espacios disponibles
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal de Confirmación de Reserva -->
+<div class="modal fade" id="confirmReservationModal" tabindex="-1" aria-labelledby="confirmReservationLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h3 class="modal-title h5 fw-bold" id="confirmReservationLabel">
+          <i class="bi bi-check-circle-fill text-success me-2"></i>Confirmar Reserva
+        </h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-4">
+          <!-- Detalles del Espacio -->
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="h6 fw-bold mb-3 text-primary">
+                  <i class="bi bi-building me-2"></i>Detalles del Espacio
+                </h5>
+                <div class="d-flex align-items-center mb-3">
+                  <div class="me-3">
+                    <i class="bi bi-box-seam fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Nombre</div>
+                    <div class="fw-bold" id="modal-workspace-name"></div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                  <div class="me-3">
+                    <i class="bi bi-geo-alt fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Ubicación</div>
+                    <div class="fw-bold" id="modal-workspace-location"></div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center">
+                  <div class="me-3">
+                    <i class="bi bi-people fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Capacidad</div>
+                    <div class="fw-bold" id="modal-workspace-capacity"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detalles de la Reserva -->
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="h6 fw-bold mb-3 text-primary">
+                  <i class="bi bi-calendar-check me-2"></i>Detalles de la Reserva
+                </h5>
+                <div class="d-flex align-items-center mb-3">
+                  <div class="me-3">
+                    <i class="bi bi-calendar-date fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Fecha</div>
+                    <div class="fw-bold">{{ date }}</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                  <div class="me-3">
+                    <i class="bi bi-clock fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Horario</div>
+                    <div class="fw-bold">{{ start_time }} - {{ end_time }}</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                  <div class="me-3">
+                    <i class="bi bi-hourglass-split fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Duración</div>
+                    <div class="fw-bold">{{ tiempo }} Horas</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center">
+                  <div class="me-3">
+                    <i class="bi bi-people-fill fs-4 text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted">Personas</div>
+                    <div class="fw-bold">{{ people }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form id="reservation-form-confirmation" action="{% url 'confirm_reservation' %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="workspace_id" id="modal-workspace-id">
+          <input type="hidden" name="date" value="{{ date }}">
+          <input type="hidden" name="start_time" value="{{ start_time }}">
+          <input type="hidden" name="end_time" value="{{ end_time }}">
+          <input type="hidden" name="people" value="{{ people }}">
+        </form>
+      </div>
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-2"></i>Cancelar
+        </button>
+        <button type="submit" class="btn btn-lg btn-success" form="reservation-form-confirmation">
+          <i class="bi bi-check-circle me-2"></i>Confirmar Reserva
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'js/reservation_validation.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      var confirmModal = document.getElementById('confirmReservationModal');
+      confirmModal.addEventListener('show.bs.modal', function (event) {
+          var button = event.relatedTarget;
+          document.getElementById('modal-workspace-name').textContent = button.getAttribute('data-name');
+          document.getElementById('modal-workspace-location').textContent = button.getAttribute('data-location');
+          document.getElementById('modal-workspace-capacity').textContent = button.getAttribute('data-capacity');
+          document.getElementById('modal-workspace-id').value = button.getAttribute('data-id');
+      });
+  });
+  </script>
+
+{% endblock extra_js %}

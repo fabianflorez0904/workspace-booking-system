@@ -1,12 +1,24 @@
 from django.urls import path
-from reservations.views.user_view import dashboard, perfil_usuario, editar_usuario, cambiar_password
+from reservations.views.user_view import perfil_usuario, editar_usuario, cambiar_password
 from reservations.views.administrador_view import registrar_usuario_admin_mode, editar_usuario_admin_mode, lista_usuarios, toggle_usuario, admin_dashboard
-from reservations.views.workspace_view import lista_espacios, registrar_espacio, editar_espacio
+from reservations.views.workspace_view import dashboard, info_reservation, lista_reservas, confirm_reservation, lista_espacios, registrar_espacio, editar_espacio, check_availability, dashboard_workspace
 from reservations.views.auth_view import registrar_usuario
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
+    path('dashboard/disponibles/', check_availability, name='check_availability'),
+    path('dashboard/reservation/info/',
+         confirm_reservation, name='confirm_reservation'),
+    path('dashboard/reservation/info/<int:reserva_id>',
+         info_reservation, name='info_reservation'),
+    path('reservas/',
+         lista_reservas, name='lista_reservas'),
+
+
+
+
+
     path('usuario/perfil/<int:user_id>', perfil_usuario, name='perfil_usuario'),
     path('usuario/perfil/editar/<int:user_id>',
          editar_usuario, name='editar_usuario'),
@@ -20,6 +32,9 @@ urlpatterns = [
          registrar_espacio, name='registrar_espacio'),
     path('administrador/espacios/editar/<int:espacio_id>',
          editar_espacio, name='editar_espacio'),
+    path('administrador/espacios/info/<int:workspace_id>',
+         dashboard_workspace, name='dashboard_workspace'),
+
 
     path('administrador/usuarios/',
          lista_usuarios, name='lista_usuarios'),

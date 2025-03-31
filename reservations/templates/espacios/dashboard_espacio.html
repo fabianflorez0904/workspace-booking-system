@@ -1,0 +1,184 @@
+{% extends "base.html" %} 
+{% block title %}Información {{ workspace.name }}{% endblock title %}
+{% block content %}
+
+<div class="container-fluid py-5">
+  <div class="row g-4">
+    <!-- Información del Espacio -->
+    <div class="col-12">
+      <div class="card border-0 shadow">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h2 class="h4 fw-bold mb-3">{{ workspace.name }}</h2>
+              <div class="row g-4">
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-grid-1x2 fs-4 me-2"></i>
+                    <div>
+                      <div class="small text-muted">Tipo</div>
+                      <div class="fw-medium">{{ workspace.get_type_display }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-people fs-4 me-2"></i>
+                    <div>
+                      <div class="small text-muted">Capacidad</div>
+                      <div class="fw-medium">{{ workspace.capacity }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <i class="bi bi-geo-alt fs-4 me-2"></i>
+                    <div>
+                      <div class="small text-muted">Ubicación</div>
+                      <div class="fw-medium">{{ workspace.location }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="d-flex align-items-center">
+                    <span class="badge {% if workspace.availability %}bg-success{% else %}bg-danger{% endif %} fs-6">
+                      {% if workspace.availability %}Disponible{% else %}Ocupado{% endif %}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a href="{% url 'lista_espacios' %}" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-2"></i>Volver
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="col-12">
+      <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <i class="bi bi-calendar-check fs-2 text-primary"></i>
+                </div>
+                <div>
+                  <div class="small text-muted">Total Reservas</div>
+                  <div class="h4 mb-0">{{ reservations|length }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <i class="bi bi-clock-history fs-2 text-warning"></i>
+                </div>
+                <div>
+                  <div class="small text-muted">Próximas</div>
+                  <div class="h4 mb-0">{{ pending_reservations}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <i class="bi bi-check-circle fs-2 text-success"></i>
+                </div>
+                <div>
+                  <div class="small text-muted">Confirmadas</div>
+                  <div class="h4 mb-0">{{ confirm_reservations }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <i class="bi bi-x-circle fs-2 text-danger"></i>
+                </div>
+                <div>
+                  <div class="small text-muted">Canceladas</div>
+                  <div class="h4 mb-0">{{ cancelled_reservations }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listado de Reservas -->
+    <div class="col-12">
+      <div class="card border-0 shadow">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-4">Usuario</th>
+                  <th>Fecha</th>
+                  <th>Horario</th>
+                  <th>Estado</th>
+                  <th class="text-end pe-4">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for reserva in reservations %}
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-person-circle me-2"></i>
+                      <div>
+                        <div class="fw-medium">{{ reserva.user.get_full_name }}</div>
+                        <div class="small text-muted">{{ reserva.user.get_role_display }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{ reserva.start_time|date:"d/m/Y" }}</td>
+                  <td>
+                    {{ reserva.start_time|time }} - {{ reserva.end_time|time }}
+                  </td>
+                  <td>
+                    <span class="badge {% if reserva.status == 'CONFIRMADA' %}bg-success{% elif reserva.status == 'PENDIENTE' %}bg-warning{% else %}bg-danger{% endif %}">
+                      {{ reserva.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-end pe-4">
+                    <button class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-three-dots"></i>
+                    </button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="5" class="text-center py-4">
+                    <i class="bi bi-calendar-x fs-4"></i>
+                    <div class="text-muted mt-2">No se encontraron reservas</div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
