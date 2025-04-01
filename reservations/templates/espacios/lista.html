@@ -126,10 +126,10 @@
                           </span>
                     </td>
                     <td>
-                        <a href="#"  class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Editar Espacio">
+                        <a href="{% url 'editar_espacio' espacio.id %}"  class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Editar Espacio">
                           <i class="bi bi-pencil-square"></i>
                         </a>
-                        <a href="#"  class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Informacion Espacio">
+                        <a href="{% url 'dashboard_workspace' espacio.id %}"  class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Informacion Espacio">
                           <i class="bi bi-info-circle"></i>
                         </a>
                     </td>
