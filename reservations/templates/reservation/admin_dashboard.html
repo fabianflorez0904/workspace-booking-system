@@ -1,19 +1,45 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% block content %}
 <div class="container mt-5">
-  <h2>Bienvenido, {{ user.username }} 👋</h2>
-  <p>Rol: {{ user.get_role_display }}</p>
+  <h3 class="text-center display-4">Panel de Administrador</h3>
+  
+  <div class="alert alert-info text-center" role="alert">
+    ¡Bienvenido, {{ user.username }}! 🎉 Estás en el panel de administración. Aquí puedes gestionar todos los aspectos importantes.
+  </div>
 
-  <h3>Panel de Administrador ADMIN</h3>
-  <a href="{% url 'lista_usuarios' %}" class="btn btn-primary"
-    >👤 Gestionar Usuarios</a
-  >
-  <a href="{% url 'lista_espacios' %}" class="btn btn-primary"
-    >🏢 Espacios de Trabajo</a
-  >
-  <a href="http://127.0.0.1:8000/admin/" class="btn btn-primary"
-    >👽 Django Admin Panel</a
-  >
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card text-center mb-4">
+        <div class="card-body">
+          <h5 class="card-title">👤 Gestionar Usuarios</h5>
+          <p class="card-text">Administra los usuarios de la plataforma.</p>
+          <a href="{% url 'lista_usuarios' %}" class="btn btn-primary">Ir a Usuarios</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center mb-4">
+        <div class="card-body">
+          <h5 class="card-title">🏢 Espacios de Trabajo</h5>
+          <p class="card-text">Gestiona los espacios disponibles para los usuarios.</p>
+          <a href="{% url 'lista_espacios' %}" class="btn btn-primary">Ir a Espacios</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center mb-4">
+        <div class="card-body">
+          <h5 class="card-title">👽 Django Admin Panel</h5>
+          <p class="card-text">Accede al panel de administración de Django.</p>
+          <a href="http://127.0.0.1:8000/admin/" class="btn btn-primary">Ir a Admin</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <br /><br />
+  <div class="text-center mt-4">
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Volver al inicio</a>
+  </div>
 </div>
-{% endblock %} {% block title %}Admin Dashboard{% endblock title %}
+{% endblock %} 
+{% block title %}Panel de Administración{% endblock title %}

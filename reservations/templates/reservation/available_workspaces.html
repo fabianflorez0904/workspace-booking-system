@@ -139,7 +139,6 @@ Disponibles{% endblock title %} {% block content %}
                   </div>
                 </div>
                 <div class="card-footer bg-transparent">
-                  <!-- Modificar el botón de Reservar en cada espacio disponible -->
                   <button
                     class="btn btn-outline-primary w-100"
                     data-bs-toggle="modal"
@@ -156,10 +155,70 @@ Disponibles{% endblock title %} {% block content %}
             </div>
             {% endfor %}
           </div>
-          {% else %}
+          {% endif %}
+
+          <!-- Espacios disponibles pronto -->
+          {% if grouped_workspaces %}
+          <div class="mt-5">
+            <h3 class="h4 fw-bold mb-4">Espacios Disponibles Pronto</h3>
+            {% for group in grouped_workspaces %}
+            <div class="mb-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="bg-warning text-dark px-3 py-2 rounded-3">
+                  <i class="bi bi-clock me-2"></i>Disponibles desde las {{ group.time }}
+                </div>
+                <div class="ms-3 text-muted small">
+                  {{ group.workspaces|length }} espacio{{ group.workspaces|length|pluralize:",s" }}
+                </div>
+              </div>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for item in group.workspaces %}
+                <div class="col">
+                  <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ item.workspace.name }}</h5>
+                        <span class="badge bg-warning text-dark">
+                          <i class="bi bi-clock me-1"></i>{{ group.time }}
+                        </span>
+                      </div>
+                      <div class="mb-2">
+                        <i class="bi bi-people me-2"></i>Capacidad: {{ item.workspace.capacity }}
+                      </div>
+                      <div class="text-muted small mb-2">
+                        <i class="bi bi-geo-alt me-2"></i>{{ item.workspace.location }}
+                      </div>
+                      <div class="mb-2">
+                        <span class="badge bg-secondary">{{ item.workspace.get_type_display }}</span>
+                      </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                      <button
+                        class="btn btn-outline-warning w-100"
+                        data-bs-toggle="modal"
+                        data-bs-target="#confirmReservationModal"
+                        data-name="{{ item.workspace.name }}"
+                        data-location="{{ item.workspace.location }}"
+                        data-capacity="{{ item.workspace.capacity }}"
+                        data-id="{{ item.workspace.id }}"
+                        data-start-time="{{ item.available_from|time }}"
+                      >
+                        Reservar desde {{ group.time }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if not available_workspaces and not grouped_workspaces %}
           <div class="alert alert-warning mb-0" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>No se encontraron
-            espacios disponibles
+            espacios disponibles ni próximos a estar disponibles
           </div>
           {% endif %}
         </div>
@@ -327,9 +386,13 @@ Disponibles{% endblock title %} {% block content %}
         button.getAttribute("data-capacity");
       document.getElementById("modal-workspace-id").value =
         button.getAttribute("data-id");
+      
+      // Si hay una hora de inicio personalizada, actualizar el formulario
+      var customStartTime = button.getAttribute("data-start-time");
+      if (customStartTime) {
+        document.querySelector('input[name="start_time"]').value = customStartTime;
+      }
     });
   });
 </script>
-<script src="{% static 'js/reservation_validation.js' %}"></script>
-
 {% endblock extra_js %}

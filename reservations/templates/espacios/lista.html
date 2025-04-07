@@ -29,14 +29,12 @@
         </div>
         <div class="col-6 col-md-3 col-lg-2">
             <div class="input-group">
-
                 <span class="input-group-text">
-    
                     <i class="bi bi-people-fill"></i>
                 </span>
-                <input type="number"  class="form-control" name="capacidad" value="{{ request.GET.capacidad }}" placeholder="Capacidad" min="0">
+                <input type="number" class="form-control" name="capacidad" 
+                       value="{{ request.GET.capacidad }}" placeholder="Capacidad" min="0">
             </div>
-
         </div>
 
         <div class="col-6 col-md-3 col-lg-2">
@@ -51,20 +49,17 @@
         <div class="col-6 col-md-3 col-lg-2">
           <select name="availability" class="form-select form-select-sm">
             <option value="">Todos los estados</option>
-            <option value="disponible" {% if request.GET.availability == True %}selected{% endif %}>Disponibles</option>
-            <option value="ocupado" {% if request.GET.availability == False %}selected{% endif %}>Ocupadas</option>
+            <option value="disponible" {% if request.GET.availability == "disponible" %}selected{% endif %}>Disponibles</option>
+            <option value="ocupado" {% if request.GET.availability == "ocupado" %}selected{% endif %}>Ocupadas</option>
           </select>
         </div>
-
-        
-
 
         <div class="col-12 col-md-6 col-lg-4">
           <div class="d-grid gap-2 d-md-block">
             <button type="submit" class="btn btn-primary btn-sm">
               <i class="bi bi-funnel me-1"></i>Filtrar
             </button>
-            <a href="#" class="btn btn-outline-secondary btn-sm">
+            <a href="{% url 'lista_espacios' %}" class="btn btn-outline-secondary btn-sm">
               <i class="bi bi-arrow-counterclockwise me-1"></i>Limpiar
             </a>
           </div>

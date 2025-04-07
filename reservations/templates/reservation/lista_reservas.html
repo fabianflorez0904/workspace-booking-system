@@ -7,6 +7,17 @@
     <div class="col-12">
       <div class="card border-0 shadow mb-4">
         <div class="card-body">
+          {% if messages %}
+          <div class="messages mb-4">
+              {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {% endfor %}
+          </div>
+          {% endif %}
+
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="h4 fw-bold mb-0"><i class="bi bi-calendar-check me-2"></i>Mis Reservas</h2>
             <div>
@@ -115,17 +126,26 @@
                       <a href="{% url 'info_reservation' reservation.id %}" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" title="Ver detalles">
                         <i class="bi bi-info-circle"></i>
                       </a>
-                      <a href="#" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Modificar">
-                        <i class="bi bi-pencil-square"></i>
-                      </a>
+                      
                       {% if reservation.status == 'PENDIENTE' %}
-                      <a href="#" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Confirmar">
-                        <i class="bi bi-check-circle"></i>
-                      </a>
+                        {% if reservation.can_confirm %}
+                        <form action="{% url 'confirm_attendance' reservation.id %}" method="post" class="d-inline">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Confirmar asistencia">
+                            <i class="bi bi-check-circle"></i>
+                          </button>
+                        </form>
+                        {% endif %}
+                        
+                        {% if reservation.can_cancel %}
+                        <form action="{% url 'cancel_reservation' reservation.id %}" method="post" class="d-inline">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Cancelar reserva">
+                            <i class="bi bi-x-circle"></i>
+                          </button>
+                        </form>
+                        {% endif %}
                       {% endif %}
-                      <a href="#" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Cancelar">
-                        <i class="bi bi-x-circle"></i>
-                      </a>
                     </div>
                   </td>
                 </tr>
@@ -153,6 +173,19 @@
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
+// Reinicializar tooltips después de cerrar alertas
+var alertList = document.querySelectorAll('.alert')
+alertList.forEach(function (alert) {
+  alert.addEventListener('closed.bs.alert', function () {
+    tooltipList.forEach(function(tooltip) {
+      tooltip.dispose()
+    })
+    tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  })
 })
 </script>
 {% endblock %}

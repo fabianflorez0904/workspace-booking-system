@@ -4,6 +4,7 @@ from reservations.views.administrador_view import registrar_usuario_admin_mode, 
 from reservations.views.workspace_view import dashboard, info_reservation, lista_reservas, confirm_reservation, lista_espacios, registrar_espacio, editar_espacio, check_availability, dashboard_workspace
 from reservations.views.auth_view import registrar_usuario
 from django.contrib.auth import views as auth_views
+from reservations.views import reservation_view
 
 urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
@@ -49,4 +50,12 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(
         template_name='usuarios/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+
+    
+    path('reserva/<int:reservation_id>/confirmar/', 
+         reservation_view.confirm_attendance, 
+         name='confirm_attendance'),
+    path('reserva/<int:reservation_id>/cancelar/', 
+         reservation_view.cancel_reservation, 
+         name='cancel_reservation'),
 ]

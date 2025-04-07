@@ -105,29 +105,60 @@ def check_availability(request):
         f"{date} {end_time}", "%Y-%m-%d %H:%M")
 
     time = end_datetime - start_datetime
-    available_workspaces = Workspace.objects.filter()
+    all_workspaces = Workspace.objects.filter()
     if people.isnumeric():
         # Filtrar workspaces por capacidad
-        available_workspaces = Workspace.objects.filter(
+        all_workspaces = Workspace.objects.filter(
             capacity__gte=int(people), availability=True)
 
-    # Filtrar workspaces que NO están reservados en ese horario
-    reserved_workspaces = Reservation.objects.filter(
+    # Obtener todas las reservas que se solapan con el horario solicitado
+    overlapping_reservations = Reservation.objects.filter(
         start_time__lt=end_datetime,
         end_time__gt=start_datetime,
-    ).exclude(status='CANCELADA').values_list("workspace", flat=True)
+    ).exclude(status='CANCELADA')
 
-    available_workspaces = available_workspaces.exclude(
-        id__in=reserved_workspaces).order_by("capacity")
+
+    # IDs de espacios reservados en el horario solicitado
+    reserved_workspace_ids = overlapping_reservations.values_list("workspace", flat=True)
+
+    # Espacios disponibles (no tienen reservas en ese horario)
+    available_workspaces = all_workspaces.exclude(
+        id__in=reserved_workspace_ids).order_by("capacity")
+
+    # Encontrar espacios que estarán disponibles pronto
+    soon_available_workspaces = {}
+    for reservation in overlapping_reservations:
+        if reservation.workspace.id in reserved_workspace_ids and reservation.workspace.capacity >= int(people or 0):
+            # Si el espacio estará disponible después del horario solicitado
+            if reservation.end_time.replace(tzinfo=None) > start_datetime and reservation.end_time.replace(tzinfo=None) < end_datetime:
+                # Usar la hora como clave para agrupar
+                available_time = reservation.end_time.strftime("%H:%M")
+                if available_time not in soon_available_workspaces:
+                    soon_available_workspaces[available_time] = []
+                
+                soon_available_workspaces[available_time].append({
+                    'workspace': reservation.workspace,
+                    'available_from': reservation.end_time
+                })
+
+    # Ordenar los grupos por hora
+    sorted_available_times = sorted(soon_available_workspaces.keys())
+    grouped_workspaces = [
+        {
+            'time': time,
+            'workspaces': soon_available_workspaces[time]
+        }
+        for time in sorted_available_times
+    ]
 
     return render(request, "reservation/available_workspaces.html", {
         "available_workspaces": available_workspaces,
+        "grouped_workspaces": grouped_workspaces,
         "date": date,
         "start_time": start_time,
         "end_time": end_time,
         "people": people,
         "tiempo": time,
-
     })
 
 
@@ -144,12 +175,6 @@ def confirm_reservation(request):
             f"{date} {start_time}", "%Y-%m-%d %H:%M")
         end_datetime = datetime.strptime(
             f"{date} {end_time}", "%Y-%m-%d %H:%M")
-
-        # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-        # workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
-        # start_time = models.DateTimeField()
-        # end_time = models.DateTimeField()
-        # status
 
         workspace = get_object_or_404(Workspace, pk=workspace_id)
 
@@ -178,9 +203,12 @@ def lista_reservas(request):
 
 @login_required
 def dashboard(request):
-
-    # form = ReservationForm()
-    reservations = Reservation.objects.filter(user=request.user)
-    workspaces = Workspace.objects.filter(availability=True)
+    # Obtener solo las reservas pendientes del usuario actual
+    reservations = Reservation.objects.filter(
+        user=request.user,
+        status=Reservation.PENDING
+    )
+    
     return render(request, 'reservation/dashboard.html', {
-        "workspaces": workspaces, 'reservations': reservations})
+        'reservations': reservations
+    })
